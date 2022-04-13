@@ -1,6 +1,9 @@
 const express = require('express');
 const Joi = require('joi');
 
+// import Record Model
+const RecordModel = require('../models/recordModel');
+
 // Joi validation
 const createRequestSchema = Joi.object({
     name : Joi.string().min(3).required(),
@@ -53,68 +56,74 @@ const records = [
   ];
 
 //   validate if data is exist
-recordRouter.use('/:recordId', (req, res, next)=>{
-    const recordIndex = records.findIndex((record) => record._id === req.params.recordId);
-    const foundRecord = records[recordIndex];
+recordRouter.use('/:recordId', async (req, res, next)=>{
+    const foundRecord = await RecordModel.findById(req.params.recordId);
     if (!foundRecord){
-        return res.status(404).send('Your requested record is not exist.')
+        return res.status(404).send('Record not found.');
     } else {
         // pass variables to the next middleware
-        req.record = foundRecord ;
-        req.recordIndex = recordIndex ;
-        next();
+        console.log('found record', foundRecord);
+        req.record = foundRecord;
+        req.recordId = req.params.recordId;
+        return next();
     }
 })
 
-recordRouter.get('/', (req, res, next)=>{
-    return res.status(200).send(records);
-});
-recordRouter.get('/:recordId', (req, res, next)=>{
-    res.status(200).send(req.record)
+
+recordRouter.get('/:recordId', async (req, res, next)=>{
+    return res.status(400).send(req.record)
 });
 
-recordRouter.post('/', (req, res, next)=>{
+recordRouter.get('/', async (req, res, next)=>{
+    const records = await RecordModel.find({});
+    return res.status(400).send(records);
+});
+
+recordRouter.post('/', async (req, res, next)=>{
     const body = req.body ;
-    console.log('body: ', body);
-    
-    const validateResult = createRequestSchema.validate(body);
-    if(validateResult.error){
-        return res.status(400).send('Invalid Request.');
-    }
+    const newRecord = new RecordModel(body);
+    const errors = newRecord.validateSync();
 
-    const newRecord = {
-        _id : 'record-' + (records.length + 1),
-        ...body,
-    }
-    records.push(newRecord);
+    if(errors){
+        const errorFieldName = object.keys(errors.errors);
+        if(errorFieldName.length > 0){
+        return res.status(400).send(errors.errors[errorFieldName[0]].message);
+    }}
+
+    await newRecord.save();
     return res.status(201).send(newRecord);
 });
 
-recordRouter.put('/:recordId', (req, res, next)=>{
+recordRouter.put('/:recordId', async (req, res, next)=>{
     const body = req.body ;
-    const index = req.params.recordId ;
-    console.log('body: ', body);
+    const index = req.recordId;
+    // find the request doc by it's id
+    const recordToBeUpdated = await RecordModel.findOne({index})
 
-    const validateResult = updateRequestSchema.validate(body);
-    if(validateResult.error){
-        return res.status(400).send('Invalid Request.');
-    }
-
+    const errors = recordToBeUpdated.validateSync();
+    if(errors){
+        const errorFieldName = object.keys(errors.errors);
+        if(errorFieldName.length > 0){
+        return res.status(400).send(errors.errors[errorFieldName[0]].message);
+    }}
+    // prepare data to update by using object dot operator
     const updatedRecord = {
         _id : index,
         ...body,
     }
-    console.log('updated data', )
-
-    records[req.recordIndex] = updatedRecord;
-    return res.status(201).send(records[req.recordIndex]);
-
+    // log out what we get for updateing document
+    console.log('updated data', updatedRecord )
+    // update exist doc by using Model.overwrite method 
+    recordToBeUpdated.overwrite(updatedRecord);
+    await recordToBeUpdated.save();
+    // return res.status(201).send(records[index]);
+    return res.status(201).send(recordToBeUpdated);
 });
 
-recordRouter.delete('/:recordId', (req, res, next)=>{
-    const index =  req.recordIndex ;
-    records.splice(index, 1);
-    return res.status(204).send()
+recordRouter.delete('/:recordId', async (req, res, next)=>{
+    // delete exist document by using .deleteOne method 
+    await RecordModel.deleteOne({ _id : req.recordId});
+    return res.status(204).send() ; // 204 = No content which mean it successfully removed
 });
 
 module.exports = recordRouter ;

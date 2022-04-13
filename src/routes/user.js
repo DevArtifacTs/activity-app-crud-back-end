@@ -17,10 +17,3 @@ userRouter.put('/me', (req, res, next)=>{});
 userRouter.use('/me/records', recordRouter);
 
 module.exports = userRouter ;
-
-/* original code
-app.post('./users/login', (req, res, next)=>{});
-app.get('./users/me', (req, res, next) => {});
-app.put('./users/me', (req, res, next) =>{});
-app.post('./users/register', (req, res, next)=>{});
-*/
