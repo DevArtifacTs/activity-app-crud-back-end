@@ -3,3 +3,5 @@ const uri = 'mongodb+srv://m001-student:m001-mongodb-basics@sandbox.jztj3.mongod
 module.exports = {
     uri,
 }
+
+

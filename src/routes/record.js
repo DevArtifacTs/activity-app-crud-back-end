@@ -25,36 +25,6 @@ const updateRequestSchema = Joi.object({
 
 const recordRouter = express.Router();
 
-const records = [
-    {
-      _id: 'record-1',
-      name: 'Running',
-      timestamp: new Date(),
-      duration: 4000,
-      calories: 200,
-      description: 'I don not know what to write',
-      location : 'BKK'
-    },
-    {
-      _id: 'record-2',
-      aname: 'Running',
-      timestamp: new Date(),
-      duration: 4000,
-      calories: 200,
-      description: 'I know who you are',
-      location : 'CNX'
-    },
-    {
-      _id: 'record-3',
-      activityName: 'Running',
-      timestamp: new Date(),
-      duration: 4000,
-      calories: 200,
-      description: 'Let run together right now',
-      location : 'Moon'
-    },
-  ];
-
 //   validate if data is exist
 recordRouter.use('/:recordId', async (req, res, next)=>{
     const foundRecord = await RecordModel.findById(req.params.recordId);
@@ -98,7 +68,7 @@ recordRouter.put('/:recordId', async (req, res, next)=>{
     const body = req.body ;
     const index = req.recordId;
     // find the request doc by it's id
-    const recordToBeUpdated = await RecordModel.findOne({index})
+    const recordToBeUpdated = await RecordModel.findOne({_id : index})
 
     const errors = recordToBeUpdated.validateSync();
     if(errors){
@@ -111,7 +81,7 @@ recordRouter.put('/:recordId', async (req, res, next)=>{
         _id : index,
         ...body,
     }
-    // log out what we get for updateing document
+    // log out what we get for updating document
     console.log('updated data', updatedRecord )
     // update exist doc by using Model.overwrite method 
     recordToBeUpdated.overwrite(updatedRecord);
