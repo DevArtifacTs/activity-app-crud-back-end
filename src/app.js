@@ -4,6 +4,9 @@ const express = require('express');
 // import body-parser for receive request's input data
 const bodyParser = require('body-parser');
 
+// import cors
+const cors = require('cors');
+
 //import external routers
 const userRouter = require('./routes/user');
 
@@ -17,6 +20,12 @@ const config =require('./scripts/config')
 const app = express();
 
 app.use(bodyParser.json());
+app.use(
+    cors({
+      origin: '*',
+      optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+    })
+  );
 
 app.use('/users', userRouter);
 //refactor with express router 

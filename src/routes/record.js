@@ -51,15 +51,15 @@ recordRouter.get('/', async (req, res, next)=>{
 
 recordRouter.post('/', async (req, res, next)=>{
     const body = req.body ;
+
     const newRecord = new RecordModel(body);
+
     const errors = newRecord.validateSync();
-
     if(errors){
-        const errorFieldName = object.keys(errors.errors);
-        if(errorFieldName.length > 0){
-        return res.status(400).send(errors.errors[errorFieldName[0]].message);
+        const errorFieldNames = Object.keys(errors.errors);
+        if (errorFieldNames.length > 0) {
+            return res.status(400).send(errors.errors[errorFieldNames[0]].message);
     }}
-
     await newRecord.save();
     return res.status(201).send(newRecord);
 });

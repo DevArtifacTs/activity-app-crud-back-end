@@ -8,6 +8,7 @@ const recordSchema = new mongoose.Schema({
     location : {type : String},
     timestamp : {type : Date},
     calories : {type : Number},
+    logo : {type : String}
 });
 
 const RecordModel = mongoose.model('Record', recordSchema, 'records');
