@@ -24,15 +24,15 @@ app.use('/users', userRouter);
 
 //start server
 const boot = async () => {
-    // connect to MongoDB
-    await mongoose.connect(config.uri)
-    // start express server
+    // Connect to mongodb
+    await mongoose.connect(config);
+    // Start express server
     app.listen(4000, () => {
-        console.log('server is listening on port 4000.');
+      console.log(`Server is listening on port 4000`);
     });
-};
-
-boot( ); 
+  };
+  
+  boot();
 
 
 
