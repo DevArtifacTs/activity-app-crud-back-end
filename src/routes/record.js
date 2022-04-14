@@ -46,7 +46,7 @@ recordRouter.get('/:recordId', async (req, res, next)=>{
 
 recordRouter.get('/', async (req, res, next)=>{
     const records = await RecordModel.find({});
-    return res.status(400).send(records);
+    return res.status(200).send(records);
 });
 
 recordRouter.post('/', async (req, res, next)=>{
