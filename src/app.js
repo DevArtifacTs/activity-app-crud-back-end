@@ -13,6 +13,9 @@ const userRouter = require('./routes/user');
 //import mongoose 
 const mongoose = require('mongoose');
 
+// PORT config
+const PORT = process.env.PORT || 4001;
+
 // import config
 const config =require('./scripts/config')
 
@@ -36,7 +39,7 @@ const boot = async () => {
     // Connect to mongodb
     await mongoose.connect(config);
     // Start express server
-    app.listen(4000, () => {
+    app.listen(PORT, () => {
       console.log(`Server is listening on port 4000`);
     });
   };
