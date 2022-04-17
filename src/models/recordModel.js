@@ -6,7 +6,7 @@ const recordSchema = new mongoose.Schema({
     description : {type : String},
     duration : {type : Number, min : [0, 'duration must be at least 0']},
     location : {type : String},
-    timestamp : {type : Date},
+    timestamp : {type : String},
     calories : {type : Number},
     logo : {type : String}
 });
