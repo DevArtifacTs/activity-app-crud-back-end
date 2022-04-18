@@ -22,6 +22,13 @@ const config =require('../src/scripts/config')
 // define express instance for use it in this server
 const app = express();
 
+if (config.isVercel) {
+  app.use(async (req, res, next) => {
+    await mongoose.connect(config.mongoUri, config.mongoOptions);
+    return next();
+  });
+}
+
 app.use(bodyParser.json());
 app.use(
     cors({
