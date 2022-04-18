@@ -40,7 +40,7 @@ const boot = async () => {
     await mongoose.connect(config);
     // Start express server
     app.listen(PORT, () => {
-      console.log(`Server is listening on port 4000`);
+      console.log(`Server is listening on port ${PORT} `);
     });
   };
   
