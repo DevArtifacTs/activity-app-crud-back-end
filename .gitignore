@@ -1,3 +1,4 @@
 # type files name that you don't want up load it to github
 
-src/scripts/config.js
+node_modules
+.env
